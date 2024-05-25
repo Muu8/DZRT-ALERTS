@@ -52,7 +52,7 @@ async def check_product_availability(session, url):
         if product_name_tag and product_link_tag:
             product_name = product_name_tag.text.strip()
             product_link = product_link_tag.get("href")
-            availability = "unavailable" in item["class"]
+            availability = "available" in item["class"]
             
             if product_name not in last_availability or last_availability[product_name] != availability:
                 last_availability[product_name] = availability
