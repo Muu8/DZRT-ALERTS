@@ -1,1 +1,1 @@
-worker: python bot.py
+DZRT-ALERTS: python bot.py
