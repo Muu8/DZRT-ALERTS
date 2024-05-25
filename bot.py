@@ -6,8 +6,8 @@ from telegram import Bot
 import asyncio
 
 # إعداد القيم الأساسية من البيئة المحيطة
-bot_token = '6908860264:AAFvAI0ZVBbvuHHguUHanWt473SiD9LYSm8'
-chat_id = '1283127981'
+bot_token = 'YOUR_BOT_TOKEN_HERE'
+chat_id = 'YOUR_CHAT_ID_HERE'
 
 if not bot_token or not chat_id:
     raise ValueError("Please set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID environment variables")
