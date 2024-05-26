@@ -61,13 +61,17 @@ async def check_product_availability(session, url):
                 if availability:
                     print(f"Product '{product_name}' is now available at position {index}.")
                     try:
-                        await bot.send_message(chat_id=chat_id, text=f' {product_name} متوفرة الآن \n \n {product_link} \n')
+                        await bot.send_message(
+                            chat_id=chat_id,
+                            text=f'[{product_name} متوفرة الآن ✅]({product_link})  \n',
+                            parse_mode='Markdown'
+                        )
                     except Exception as e:
                         print(f"Failed to send message: {e}")
                 else:
                     print(f"Product '{product_name}' is now unavailable at position {index}.")
                     try:
-                        await bot.send_message(chat_id=chat_id, text=f'نفذت الكمية {product_name} \n')
+                        await bot.send_message(chat_id=chat_id, text=f' نفذت الكمية ❌{product_name} \n')
                     except Exception as e:
                         print(f"Failed to send message: {e}")
                 last_availability[product_name] = availability
