@@ -14,8 +14,8 @@ if not bot_token or not chat_id:
 
 bot = Bot(bot_token)
 
-initial_check_interval = 0.5  # تقليل الفاصل الزمني للتأكد من توفر المنتجات بشكل أسرع
-extended_check_interval = 0.5  # زيادة الفاصل الزمني عند العثور على توفر المنتجات لتجنب الطلبات المتكررة
+initial_check_interval = 0.2  # تقليل الفاصل الزمني للتأكد من توفر المنتجات بشكل أسرع
+extended_check_interval = 0.2  # زيادة الفاصل الزمني عند العثور على توفر المنتجات لتجنب الطلبات المتكررة
 product_url = "https://www.dzrt.com/ar/our-products.html"
 
 last_availability = {}
@@ -61,13 +61,13 @@ async def check_product_availability(session, url):
                 if availability:
                     print(f"Product '{product_name}' is now available at position {index}.")
                     try:
-                        await bot.send_message(chat_id=chat_id, text=f' {product_name} متوفرة الآن \n {product_link}')
+                        await bot.send_message(chat_id=chat_id, text=f' {product_name} متوفرة الآن \n \n {product_link} \n')
                     except Exception as e:
                         print(f"Failed to send message: {e}")
                 else:
                     print(f"Product '{product_name}' is now unavailable at position {index}.")
                     try:
-                        await bot.send_message(chat_id=chat_id, text=f' {product_name} نفذت كميتها الآن')
+                        await bot.send_message(chat_id=chat_id, text=f' نفذت كميتها {product_name}  \n')
                     except Exception as e:
                         print(f"Failed to send message: {e}")
                 last_availability[product_name] = availability
