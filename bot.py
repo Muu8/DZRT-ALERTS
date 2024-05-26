@@ -14,8 +14,8 @@ if not bot_token or not chat_id:
 
 bot = Bot(bot_token)
 
-initial_check_interval = 1  # تقليل الفاصل الزمني للتأكد من توفر المنتجات بشكل أسرع
-extended_check_interval = 5  # زيادة الفاصل الزمني عند العثور على توفر المنتجات لتجنب الطلبات المتكررة
+initial_check_interval = 0.5  # تقليل الفاصل الزمني للتأكد من توفر المنتجات بشكل أسرع
+extended_check_interval = 0.5  # زيادة الفاصل الزمني عند العثور على توفر المنتجات لتجنب الطلبات المتكررة
 product_url = "https://www.dzrt.com/ar/our-products.html"
 
 last_availability = {}
@@ -54,7 +54,10 @@ async def check_product_availability(session, url):
             product_link = product_link_tag.get("href")
             availability = "unavailable" not in item["class"]
             
-            if product_name not in last_availability or last_availability[product_name] != availability:
+            if product_name not in last_availability:
+                last_availability[product_name] = False
+            
+            if last_availability[product_name] != availability:
                 if availability:
                     print(f"Product '{product_name}' is now available at position {index}.")
                     try:
