@@ -74,6 +74,7 @@ async def check_product_availability(session, url):
                 last_availability[product_name] = availability
 
 async def main():
+    print("The bot is running!")  # رسالة تشخيصية لتأكيد أن البوت يعمل
     async with aiohttp.ClientSession() as session:
         check_interval = initial_check_interval
         while True:
