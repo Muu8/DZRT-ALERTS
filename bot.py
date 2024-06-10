@@ -36,8 +36,7 @@ async def check_product_availability(session, url):
     try:
         async with session.get(url, headers=headers) as response:
             response.raise_for_status()
-            html = await response.text()
-            print("Fetched the page successfully")
+            html = await response.text()    
     except aiohttp.ClientError as e:
         print(f"Failed to fetch the page: {e}")
         return
