@@ -62,7 +62,7 @@ async def check_product_availability(session, url):
             if last_availability[product_name] != availability:
                 if availability:
                     try:
-                        caption = f'{product_name} متوفرة الآن ✅\n\n'
+                        caption = f'{product_name} متوفر الآن ✅\n\n'
                         keyboard = InlineKeyboardMarkup(
                             [[
                                 InlineKeyboardButton("السلة", url="https://www.dzrt.com/ar/checkout/cart"),
