@@ -14,7 +14,7 @@ if not bot_token or not chat_id:
 
 bot = Bot(bot_token)
 
-initial_check_interval = 0.1  # تقليل الفاصل الزمني للتأكد من توفر المنتجات بشكل أسرع
+initial_check_interval = 0.05  # تقليل الفاصل الزمني للتأكد من توفر المنتجات بشكل أسرع
 extended_check_interval = 0  # زيادة الفاصل الزمني عند العثور على توفر المنتجات لتجنب الطلبات المتكررة
 product_url = "https://www.dzrt.com/ar/our-products.html"
 
