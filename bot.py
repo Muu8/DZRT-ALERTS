@@ -75,13 +75,11 @@ async def check_product_availability(session, url):
                             parse_mode='Markdown',
                             reply_markup=keyboard
                         )
-                        print(f"Sent availability message for {product_name}")
                     except Exception as e:
                         print(f"Failed to send message: {e}")
                 else:
                     try:
                         await bot.send_message(chat_id=chat_id, text=f' {product_name} نفذت الكمية ❌ \n')
-                        print(f"Sent out-of-stock message for {product_name}")
                     except Exception as e:
                         print(f"Failed to send message: {e}")
                 last_availability[product_name] = availability
