@@ -1,6 +1,7 @@
 import os
 import aiohttp
 import random
+import time
 from bs4 import BeautifulSoup
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 import asyncio
@@ -19,6 +20,8 @@ extended_check_interval = 0  # زيادة الفاصل الزمني عند ال�
 product_url = "https://www.dzrt.com/ar/our-products.html"
 
 last_availability = {}
+last_notification_time = {}
+notification_interval = 180  # 3 دقائق بالثواني
 
 user_agents = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML، مثل Gecko) Chrome/58.0.3029.110 Safari/537.3",
@@ -29,7 +32,7 @@ user_agents = [
 ]
 
 async def check_product_availability(session, url):
-    global last_availability
+    global last_availability, last_notification_time
     headers = {
         "User-Agent": random.choice(user_agents)
     }
@@ -56,8 +59,10 @@ async def check_product_availability(session, url):
             
             if product_name not in last_availability:
                 last_availability[product_name] = False
+                last_notification_time[product_name] = 0
             
-            if last_availability[product_name] != availability:
+            current_time = time.time()
+            if last_availability[product_name] != availability or (availability and (current_time - last_notification_time[product_name] > notification_interval)):
                 if availability:
                     try:
                         caption = f'{product_name} متوفر الآن ✅\n\n'
@@ -74,11 +79,7 @@ async def check_product_availability(session, url):
                             parse_mode='Markdown',
                             reply_markup=keyboard
                         )
-                    except Exception as e:
-                        print(f"Failed to send message: {e}")
-                else:
-                    try:
-                        await bot.send_message(chat_id=chat_id, text=f' {product_name} نفذت الكمية ❌ \n')
+                        last_notification_time[product_name] = current_time
                     except Exception as e:
                         print(f"Failed to send message: {e}")
                 last_availability[product_name] = availability
