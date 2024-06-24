@@ -67,12 +67,10 @@ async def check_product_availability(session, url):
                     try:
                         caption = f'{product_name} متوفر الآن ✅\n\n'
                         keyboard = InlineKeyboardMarkup(
-                            [[
-                                InlineKeyboardButton("السلة", url="https://www.dzrt.com/ar/checkout/cart"),
-                                InlineKeyboardButton("عرض المنتج", url=product_link),
-                                InlineKeyboardButton("تسجيل الدخول", url="https://www.dzrt.com/ar/customer/account/login"),
-                                InlineKeyboardButton("الدفع", url="https://www.dzrt.com/ar/onestepcheckout.html")
-                            ]]
+                            [
+                                [InlineKeyboardButton("السلة", url="https://www.dzrt.com/ar/checkout/cart"), InlineKeyboardButton("عرض المنتج", url=product_link)],
+                                [InlineKeyboardButton("تسجيل الدخول", url="https://www.dzrt.com/ar/customer/account/login"), InlineKeyboardButton("الدفع", url="https://www.dzrt.com/ar/onestepcheckout.html")]
+                            ]
                         )
                         await bot.send_photo(
                             chat_id=chat_id,
