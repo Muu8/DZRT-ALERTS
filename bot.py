@@ -21,7 +21,7 @@ product_url = "https://www.dzrt.com/ar/our-products.html"
 
 last_availability = {}
 last_notification_time = {}
-notification_interval = 170  # 3 دقائق بالثواني
+notification_interval = 300  # 3 دقائق بالثواني
 
 user_agents = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML، مثل Gecko) Chrome/58.0.3029.110 Safari/537.3",
