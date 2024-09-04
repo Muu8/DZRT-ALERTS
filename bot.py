@@ -36,16 +36,24 @@ async def check_product_availability(session, url):
     headers = {
         "User-Agent": random.choice(user_agents)
     }
+    print("Attempting to fetch the product page...")  # رسالة تشخيصية
     try:
         async with session.get(url, headers=headers) as response:
             response.raise_for_status()
-            html = await response.text()    
+            html = await response.text()
+            print("Fetched the product page successfully.")  # رسالة تشخيصية
     except aiohttp.ClientError as e:
+        print(f"Failed to fetch the product page: {e}")  # رسالة تشخيصية في حالة الفشل
         return
     
     soup = BeautifulSoup(html, 'html.parser')
     product_items = soup.select("li.item.product.product-item")
     
+    if not product_items:
+        print("No product items found on the page.")  # رسالة تشخيصية في حالة عدم العثور على منتجات
+    else:
+        print(f"Found {len(product_items)} product items on the page.")  # رسالة تشخيصية لعدد المنتجات
+
     for index, item in enumerate(product_items):
         product_name_tag = item.find("a", {"class": "product-item-link"})
         product_link_tag = item.find("a", {"class": "product-item-photo"})
@@ -64,9 +72,9 @@ async def check_product_availability(session, url):
             current_time = time.time()
             if last_availability[product_name] != availability or (availability and (current_time - last_notification_time[product_name] > notification_interval)):
                 if availability:
+                    print(f"Product '{product_name}' is available. Attempting to send notification...")  # رسالة تشخيصية
                     try:
                         caption = f'{product_name} متوفر الآن ✅\n\n'
-                        print('Product is avalable')
                         keyboard = InlineKeyboardMarkup(
                             [
                                 [InlineKeyboardButton("السلة", url="https://www.dzrt.com/ar/checkout/cart"), InlineKeyboardButton("عرض المنتج", url=product_link)],
@@ -80,9 +88,10 @@ async def check_product_availability(session, url):
                             parse_mode='Markdown',
                             reply_markup=keyboard
                         )
+                        print(f"Notification for '{product_name}' sent successfully.")  # رسالة تشخيصية
                         last_notification_time[product_name] = current_time
                     except Exception as e:
-                        print(f"Failed to send message: {e}")
+                        print(f"Failed to send notification: {e}")  # رسالة تشخيصية في حالة فشل الإرسال
                 last_availability[product_name] = availability
 
 async def main():
@@ -98,4 +107,7 @@ async def main():
             await asyncio.sleep(check_interval)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        print(f"An error occurred in the bot: {e}")  # رسالة تشخيصية في حالة حدوث خطأ غير متوقع
