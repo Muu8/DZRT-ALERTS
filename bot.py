@@ -55,7 +55,7 @@ async def check_product_availability(session, url):
             product_name = product_name_tag.text.strip()
             product_link = product_link_tag.get("href")
             product_image = product_image_tag.get("data-src")  # تغيير هنا لاستخدام data-src بدلاً من src
-            availability = "available" not in item["class"]
+            availability = "unavailable" in item["class"]
             
             if product_name not in last_availability:
                 last_availability[product_name] = False
