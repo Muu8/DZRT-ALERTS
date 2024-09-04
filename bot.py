@@ -23,37 +23,35 @@ last_availability = {}
 last_notification_time = {}
 notification_interval = 300  # 3 دقائق بالثواني
 
+# قائمة وكلاء المستخدمين (User-Agents) للتبديل بينها
 user_agents = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML، مثل Gecko) Chrome/58.0.3029.110 Safari/537.3",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML، مثل Gecko) Version/14.0.3 Safari/605.1.15",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML، مثل Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0",
     "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML، مثل Gecko) Version/14.0.3 Mobile/15E148 Safari/604.1",
-    "Mozilla/5.0 (Linux; Android 10; SM-G975F) AppleWebKit/537.36 (KHTML، مثل Gecko) Chrome/89.0.4389.72 Mobile Safari/537.36"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML، مثل Gecko) Chrome/58.0.3029.110 Safari/537.3",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML، مثل Gecko) Version/14.0.3 Safari/605.1.15"
 ]
 
 async def check_product_availability(session, url):
     global last_availability, last_notification_time
     headers = {
-        "User-Agent": random.choice(user_agents)
+        "User-Agent": random.choice(user_agents)  # اختيار وكيل مستخدم عشوائيًا من القائمة
     }
-    print("Attempting to fetch the product page...")  # رسالة تشخيصية
+    print(f"Using User-Agent: {headers['User-Agent']}")  # رسالة تشخيصية لطباعة وكيل المستخدم المستخدم
     try:
         async with session.get(url, headers=headers) as response:
+            if response.status == 403:
+                print(f"Failed to fetch the product page: {response.status}, Forbidden")
+                return
             response.raise_for_status()
-            html = await response.text()
-            print("Fetched the product page successfully.")  # رسالة تشخيصية
+            html = await response.text()    
     except aiohttp.ClientError as e:
-        print(f"Failed to fetch the product page: {e}")  # رسالة تشخيصية في حالة الفشل
+        print(f"Request failed: {e}")
         return
     
     soup = BeautifulSoup(html, 'html.parser')
     product_items = soup.select("li.item.product.product-item")
     
-    if not product_items:
-        print("No product items found on the page.")  # رسالة تشخيصية في حالة عدم العثور على منتجات
-    else:
-        print(f"Found {len(product_items)} product items on the page.")  # رسالة تشخيصية لعدد المنتجات
-
     for index, item in enumerate(product_items):
         product_name_tag = item.find("a", {"class": "product-item-link"})
         product_link_tag = item.find("a", {"class": "product-item-photo"})
@@ -72,7 +70,6 @@ async def check_product_availability(session, url):
             current_time = time.time()
             if last_availability[product_name] != availability or (availability and (current_time - last_notification_time[product_name] > notification_interval)):
                 if availability:
-                    print(f"Product '{product_name}' is available. Attempting to send notification...")  # رسالة تشخيصية
                     try:
                         caption = f'{product_name} متوفر الآن ✅\n\n'
                         keyboard = InlineKeyboardMarkup(
@@ -88,10 +85,9 @@ async def check_product_availability(session, url):
                             parse_mode='Markdown',
                             reply_markup=keyboard
                         )
-                        print(f"Notification for '{product_name}' sent successfully.")  # رسالة تشخيصية
                         last_notification_time[product_name] = current_time
                     except Exception as e:
-                        print(f"Failed to send notification: {e}")  # رسالة تشخيصية في حالة فشل الإرسال
+                        print(f"Failed to send message: {e}")
                 last_availability[product_name] = availability
 
 async def main():
@@ -107,7 +103,4 @@ async def main():
             await asyncio.sleep(check_interval)
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except Exception as e:
-        print(f"An error occurred in the bot: {e}")  # رسالة تشخيصية في حالة حدوث خطأ غير متوقع
+    asyncio.run(main())
