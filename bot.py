@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 import asyncio
 
-# إعداد القيم الأساسية من البيئة المحيطة
 bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
 chat_id = os.getenv('TELEGRAM_CHAT_ID')
 
@@ -15,8 +14,8 @@ if not bot_token or not chat_id:
 
 bot = Bot(bot_token)
 
-initial_check_interval = 5  # تقليل الفاصل الزمني للتأكد من توفر المنتجات بشكل أسرع
-extended_check_interval = 0  # زيادة الفاصل الزمني عند العثور على توفر المنتجات لتجنب الطلبات المتكررة
+initial_check_interval = 5  
+extended_check_interval = 0  
 product_url = "https://www.dzrt.com/ar/our-products.html"
 
 last_availability = {}
@@ -35,9 +34,9 @@ user_agents = [
 async def check_product_availability(session, url):
     global last_availability, last_notification_time
     headers = {
-        "User-Agent": random.choice(user_agents)  # اختيار وكيل مستخدم عشوائيًا من القائمة
+        "User-Agent": random.choice(user_agents) 
     }
-    print(f"Using User-Agent: {headers['User-Agent']}")  # رسالة تشخيصية لطباعة وكيل المستخدم المستخدم
+    print(f"Using User-Agent: {headers['User-Agent']}") 
     try:
         async with session.get(url, headers=headers) as response:
             if response.status == 403:
@@ -60,7 +59,7 @@ async def check_product_availability(session, url):
         if product_name_tag and product_link_tag and product_image_tag:
             product_name = product_name_tag.text.strip()
             product_link = product_link_tag.get("href")
-            product_image = product_image_tag.get("data-src")  # تغيير هنا لاستخدام data-src بدلاً من src
+            product_image = product_image_tag.get("data-src") 
             availability = "unavailable" not in item["class"]
             
             if product_name not in last_availability:
@@ -91,7 +90,7 @@ async def check_product_availability(session, url):
                 last_availability[product_name] = availability
 
 async def main():
-    print("The bot is running!")  # رسالة تشخيصية لتأكيد أن البوت يعمل
+    print("The bot is running!") 
     async with aiohttp.ClientSession() as session:
         check_interval = initial_check_interval
         while True:
